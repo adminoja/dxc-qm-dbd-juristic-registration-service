@@ -8,7 +8,7 @@
 
 ## Documentation
 
-* [เอกสารระบบ](https://gdx.dga.or.th/DataCatalog/Dictionary/Detail?id=7b8fa79d-b214-4d0e-b539-8bd6a99f8f5c) - รายละเอียดระบบ
+* [เอกสารระบบ](https://gdx.dga.or.th/DataCatalog/Dictionary/Detail?id=7b8fa79d-b214-4d0e-b539-8bd6a99f8f5c) - รายละเอียดระบบของ นิติบุคคล
 
 ## Getting Started
 
