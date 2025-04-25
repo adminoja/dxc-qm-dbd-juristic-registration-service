@@ -1,0 +1,145 @@
+#--------------------------
+# Base Config
+#--------------------------
+server.port: 0
+
+# ===============================
+#  Spring Cloud Config
+# ===============================
+# Discovery Client
+spring.cloud.discovery.enabled: true
+eureka.client.enabled: true
+
+eureka.instance:
+#  environment: staging
+#  hostname: 10.129.214.131 # Use when test via VPN (different IP)
+  preferIpAddress: true # Use when ip is valid
+  leaseRenewalIntervalInSeconds: 10   # SBA
+  nonSecurePortEnabled: true
+  securePortEnabled: false
+  metadataMap:    
+    startup: ${random.int}    #needed to trigger info and endpoint update after restart (SBA)
+    user:  configUser
+    password:  c0nf1gP9ssw0rd
+    
+eureka.client:  
+  registerWithEureka: true
+  fetchRegistry: true
+  registryFetchIntervalSeconds: 5    # SBA
+  serviceUrl.defaultZone: http://cloud-registry-01.ad.thaidxc.org:8761/eureka,http://cloud-registry-02.ad.thaidxc.org:8761/eureka
+  
+# Config Client
+spring.cloud.config.enabled: true
+spring.config.import: "configserver:https://configUser:c0nf1gP9ssw0rd@config-01.dxc.go.th:8888/"
+
+# ===============================
+## Log Config
+# ===============================
+# Log Level 
+logging.level:  # Attention Required!!
+  th.go.dxc: INFO 
+  org.springframework.web: INFO  
+  org.springframework.ws.client.core.WebServiceTemplate: INFO
+  org.springframework.ws.client.MessageTracing: INFO
+  org.springframework.ws.server.MessageTracing: INFO
+  org.springframework.ws.client.MessageTracing.sent: INFO
+  org.springframework.ws.server.MessageTracing.sent: INFO
+  org.springframework.ws.client.MessageTracing.received: INFO
+  org.springframework.ws.server.MessageTracing.received: INFO
+  sun.security: INFO
+
+# ===============================
+#  Spring Security Config
+# ===============================
+spring.security.oauth2.resourceserver:
+  jwt:
+    issuer-uri: https://sso.dxc.go.th/auth/realms/DXC
+
+# ===============================
+#  Application Cofig
+# ===============================
+# Api Connector
+infra.connector.dbd-egov-api:
+   base_url: "https://api.egov.go.th/ws/dbd/juristic/v7"
+
+#==================
+# DXC Primary Data Source
+#==================
+app.datasource.primary:
+  jdbc:
+    url: jdbc:h2:mem:primary;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  hikari:
+    minimum-idle: 2 #minimum number of idle connections maintained by HikariCP in a connection pool
+    maximum-pool-size: 10 #maximum pool size
+  jpa:
+    show-sql: true # Attention Required!!
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: true  # have the same EntityManager until the web request is finished
+    properties:
+      # Naming Convention Properties      
+      hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      # DDL Auto Properties (database) 
+      javax.persistence.schema-generation.database.action: drop-and-create # Attention Required!!
+      # Extra config
+      javax.persistence.schema-generation.scripts.action: drop-and-create # Attention Required!!
+      javax.persistence.schema-generation.scripts.create-target: sqls/create-schema.sql # Attention Required!!
+      javax.persistence.schema-generation.scripts.drop-target: sqls/drop-schema.sql # Attention Required!!
+
+#==================
+# DB-01 Datasource
+#==================
+app.datasource.db-01:
+  jdbc:
+    url: jdbc:h2:mem:db01;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  hikari:
+    minimum-idle: 2 #minimum number of idle connections maintained by HikariCP in a connection pool
+    maximum-pool-size: 3 #maximum pool size
+  jpa:
+    show-sql: true # Attention Required!!
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: true  # have the same EntityManager until the web request is finished
+    properties:
+      # Naming Convention Properties      
+      hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+#      hibernate.hbm2ddl.import_files: sql/dev/dxc_master_db/dxc_organization_v1-h2-insert.sql, sql/dev/dxc_master_db/dxc_data_set_v1-h2-insert.sql, sql/dev/dxc_master_db/dxc_data_service_v1-h2-insert.sql # Attention Required!!
+      # DDL Auto Properties (database)
+      javax.persistence.schema-generation.database.action: drop-and-create # Attention Required!!
+      # Extra config
+      javax.persistence.schema-generation.scripts.action: drop-and-create # Attention Required!!
+      javax.persistence.schema-generation.scripts.create-target: sqls/create-schema.sql # Attention Required!!
+      javax.persistence.schema-generation.scripts.drop-target: sqls/drop-schema.sql # Attention Required!!
+
+#==================
+# DXC SAM DB Datasource
+#==================
+app.datasource.dxc-sam-db:
+  jdbc:
+    url: jdbc:sqlserver://10.14.33.22;databaseName=SAM
+    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    username: dxc_user
+    password: patiwat
+  hikari:
+    minimum-idle: 2 #minimum number of idle connections maintained by HikariCP in a connection pool
+    maximum-pool-size: 3 #maximum pool size
+  jpa:
+    show-sql: true # Attention Required!!
+    database-platform: org.hibernate.dialect.SQLServer2008Dialect
+    open-in-view: true  # have the same EntityManager until the web request is finished
+    properties:
+      hibernate.dialect: org.hibernate.dialect.SQLServer2008Dialect
+      # Naming Convention Properties      
+      hibernate.physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      hibernate.implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+#      hibernate.hbm2ddl.import_files: sql/dxc_sam_db/dxc_user_search_log_v1-insert.sql # Attention Required!!
+      # DDL Auto Properties (database)
+      javax.persistence.schema-generation.database.action: none # Attention Required!!
+      # Extra config
+      javax.persistence.schema-generation.scripts.action: none # Attention Required!!
+#      javax.persistence.schema-generation.scripts.create-target: sqls/create-schema.sql # Attention Required!!
+#      javax.persistence.schema-generation.scripts.drop-target: sqls/drop-schema.sql # Attention Required!!
