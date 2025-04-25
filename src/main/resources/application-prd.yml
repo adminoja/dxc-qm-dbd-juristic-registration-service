@@ -60,7 +60,8 @@ spring.security.oauth2.resourceserver:
 # ===============================
 # Api Connector
 infra.connector.dbd-egov-api:
-   base_url: "https://api.egov.go.th/ws/dbd/juristic/v7"
+   base_url_validate: "https://api.egov.go.th/ws/auth/validate" #gen token
+   base_url: "https://api.egov.go.th/ws/dbd/juristic/v7" #post data
 
 #==================
 # DXC Primary Data Source
