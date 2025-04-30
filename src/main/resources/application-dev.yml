@@ -1,53 +1,65 @@
-#--------------------------
-# Base Config
-#--------------------------
-server.port: 0
+#################################
+##  DEV Configuration
+#################################
 
 # ===============================
 #  Spring Cloud Config
 # ===============================
-# Discovery Client
-spring.cloud.discovery.enabled: true
-eureka.client.enabled: true
+spring.cloud.config.enabled: false 
+spring.cloud.discovery.enabled: false
+eureka.client.enabled: false
 
-eureka.instance:
-#  environment: staging
-#  hostname: 10.129.214.131 # Use when test via VPN (different IP)
-  preferIpAddress: true # Use when ip is valid
-  leaseRenewalIntervalInSeconds: 10   # SBA
-  nonSecurePortEnabled: true
-  securePortEnabled: false
-  metadataMap:    
-    startup: ${random.int}    #needed to trigger info and endpoint update after restart (SBA)
-    user:  configUser
-    password:  c0nf1gP9ssw0rd
-    
-eureka.client:  
-  registerWithEureka: true
-  fetchRegistry: true
-  registryFetchIntervalSeconds: 5    # SBA
-  serviceUrl.defaultZone: http://cloud-registry-01.ad.thaidxc.org:8761/eureka,http://cloud-registry-02.ad.thaidxc.org:8761/eureka
-  
-# Config Client
-spring.cloud.config.enabled: true
-spring.config.import: "configserver:https://configUser:c0nf1gP9ssw0rd@config-01.dxc.go.th:8888/"
+# ===============================
+#  Basic Cofnig
+# ===============================
+# Server port
+server.port: 8081
+
+# Server Error never,on_trace_param,always
+server.error: # Attention Required!!
+  include-stacktrace: always 
+  include-message: always 
+  include-binding-errors: always 
+  include-exception: false
+
+# H2 Console
+spring.h2.console.enabled: true # Attention Required!!
+spring.h2.console.port: 0
+
+# Open API Specification (Swagger 3)
+springdoc.api-docs.enabled: true
+springdoc.swagger-ui.enabled: true
+springdoc.swagger-ui.filter: true
+
+
+# Features
+spring.liquibase.enabled: false
 
 # ===============================
 ## Log Config
 # ===============================
 # Log Level 
 logging.level:  # Attention Required!!
-  th.go.dxc: INFO 
-  org.springframework.web: INFO  
-  org.springframework.ws.client.core.WebServiceTemplate: INFO
-  org.springframework.ws.client.MessageTracing: INFO
-  org.springframework.ws.server.MessageTracing: INFO
-  org.springframework.ws.client.MessageTracing.sent: INFO
-  org.springframework.ws.server.MessageTracing.sent: INFO
-  org.springframework.ws.client.MessageTracing.received: INFO
-  org.springframework.ws.server.MessageTracing.received: INFO
-  sun.security: INFO
+  th.go.dxc: DEBUG 
+  org.springframework.web: DEBUG  
+  org.springframework.ws.client.core.WebServiceTemplate: DEBUG
+  org.springframework.ws.client.MessageTracing: DEBUG
+  org.springframework.ws.server.MessageTracing: DEBUG
+  org.springframework.ws.client.MessageTracing.sent: DEBUG
+  org.springframework.ws.server.MessageTracing.sent: DEBUG
+  org.springframework.ws.client.MessageTracing.received: DEBUG
+  org.springframework.ws.server.MessageTracing.received: DEBUG
+  sun.security: DEBUG
 
+# Log File
+logging.file.name: logs/${spring.application.name}-${spring.profiles.active}.log
+logging.logback.rollingpolicy:
+  file-name-pattern: logs/${spring.application.name}-${spring.profiles.active}-%d{yyyy-MM-dd}.%i.log
+  max-file-size: 10MB
+  max-history: 7
+  total-size-cap: 0B
+  clean-history-on-start: true # Attention Required!!
+  
 # ===============================
 #  Spring Security Config
 # ===============================
@@ -58,11 +70,15 @@ spring.security.oauth2.resourceserver:
 # ===============================
 #  Application Cofig
 # ===============================
+# Limit Search 30,000 times Per Daily
+search:
+  limit:
+     daily: 30000  # จำนวนสูงสุดที่อนุญาตให้ค้นหาในแต่ละวัน
+
 # Dbd Egov Api Connector
 infra.connector.dbd-egov-api:
    base_url_validate: "https://api.egov.go.th/ws/auth/validate" #gen token
    base_url: "https://api.egov.go.th/ws/dbd/juristic/v7" #post data
-
 #==================
 # DXC Primary Data Source
 #==================
