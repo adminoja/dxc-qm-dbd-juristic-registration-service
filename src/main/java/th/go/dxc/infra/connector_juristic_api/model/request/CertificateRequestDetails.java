@@ -1,4 +1,4 @@
-package th.go.dxc.infra.connector_juristic_api.request;
+package th.go.dxc.infra.connector_juristic_api.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

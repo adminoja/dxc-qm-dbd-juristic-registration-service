@@ -1,4 +1,4 @@
-package th.go.dxc.infra.connector_juristic_api.response;
+package th.go.dxc.infra.connector_juristic_api.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LoginResponse {
-	private String ConsumerSecret;
-	private String AgentID;
+	private String Result;
 }

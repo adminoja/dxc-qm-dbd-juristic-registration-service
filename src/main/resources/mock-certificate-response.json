@@ -1,0 +1,18 @@
+{
+  "status": {
+    "code": "1000",
+    "description": "Success"
+  },
+  "data": {
+    "OrganizationJuristicID": "010XXXXXXXXXX",
+    "FileName": "010XXXXXXXXXXJPCERT20230329162945.pdf",
+    "FileSize": "123456",
+    "Info": {
+      "Name": "หนังสือรับรองนิติบุคคล",
+      "NumberOfPage": "5"
+    },
+    "mimeType": "application/pdf",
+    "Hashes": "4B158C5639576E32A668653C6D7BBD88",
+    "Result": "JVBERi0xLjcKJeLjz9MKMyAwIG9iago8PC9GVC9TaWcvV..."
+  }
+}
