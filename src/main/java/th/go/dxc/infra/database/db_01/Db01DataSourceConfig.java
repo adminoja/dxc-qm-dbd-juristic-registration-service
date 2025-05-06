@@ -1,4 +1,4 @@
-package th.go.dxc.infra.db_01;
+package th.go.dxc.infra.database.db_01;
 
 import javax.persistence.EntityManagerFactory;
 
