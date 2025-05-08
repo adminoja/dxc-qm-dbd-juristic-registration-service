@@ -52,7 +52,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		String result = null;
 		try {
 			System.out.println("token UserNin = " + userNin);
-			LoginResponse loginResponse = this.webClient.get()
+			String loginResponse = this.webClient.get()
 					.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
 							.queryParam("ConsumerSecret", properties.getConsumerSecret())
 							.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
@@ -62,13 +62,25 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 					.onStatus(HttpStatus::isError,
 							response -> response.bodyToMono(String.class)
 									.flatMap(body -> Mono.error(new BadGatewayException("API Error: " + body))))
-					.bodyToMono(LoginResponse.class).block(); // ทำให้เป็น synchronous
+					.bodyToMono(String.class)
+					.block(); // ทำให้เป็น synchronous
 
 			// ทำอะไรกับ loginResponse ต่อได้ตรงนี้
 			log.info("Login success: {}", loginResponse);
-			responseLogin = loginResponse;
-			result = "Success";
+			
+//			responseLogin = loginResponse;
+			
+			System.out.println("loginResponse = " + loginResponse);
+			
+			Gson gson = new Gson(); // อย่าลืม import com.google.gson.Gson
+			LoginResponse loginObj = gson.fromJson(loginResponse, LoginResponse.class);
+			System.out.println("Parsed Result = " + loginObj.getResult());
+			
+			responseLogin = loginObj;
 			System.out.println("responseLogin = " + responseLogin);
+			
+			result = "Success";
+			
 		} catch (BadGatewayException e) {
 			log.error("API returned error: {}", e.getMessage());
 		} catch (Exception e) {
