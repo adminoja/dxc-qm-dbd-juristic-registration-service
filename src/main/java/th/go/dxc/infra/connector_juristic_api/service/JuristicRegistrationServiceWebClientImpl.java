@@ -52,7 +52,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		String result = null;
 		try {
 			System.out.println("token UserNin = " + userNin);
-			String loginResponse = this.webClient.get()
+			String loginResponse = webClient.get()
 					.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
 							.queryParam("ConsumerSecret", properties.getConsumerSecret())
 							.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
