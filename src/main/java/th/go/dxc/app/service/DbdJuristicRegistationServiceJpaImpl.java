@@ -43,14 +43,16 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 //		DxcUserDetails userDetails = securityService.getCurrentUser();
 		System.out.println("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
 		String userNin = securityService.getCurrentUser().getUserNin();
-		juristicRegistrationService.token(userNin);
+		String result = juristicRegistrationService.token(userNin);
 		
-		JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
-		System.out.println("profileResponse = " + juristicRegistrationResponse);
-		
-		if (juristicRegistrationResponse != null) {
-			dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
-			resultList.add(dbdJuristicRegistration);
+		if ("Success".contains(result)) {
+			JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
+			System.out.println("profileResponse = " + juristicRegistrationResponse);
+			
+			if (juristicRegistrationResponse != null) {
+				dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
+				resultList.add(dbdJuristicRegistration);
+			}
 		}
 		
 		resultPage = mapperService.mapSortedAndSlicedPage(resultList, pageable, DbdJuristicRegistration.class);

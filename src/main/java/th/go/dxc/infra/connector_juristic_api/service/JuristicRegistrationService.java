@@ -5,6 +5,6 @@ import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistratio
 import th.go.dxc.infra.connector_juristic_api.model.response.LoginResponse;
 
 public interface JuristicRegistrationService {
-	public void token(String userNin);
+	public String token(String userNin);
 	public JuristicRegistrationResponse findProfile(RequesterDetails requesterDetails);
 }

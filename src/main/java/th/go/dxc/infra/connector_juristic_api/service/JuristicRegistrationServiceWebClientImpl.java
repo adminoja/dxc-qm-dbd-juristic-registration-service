@@ -31,7 +31,7 @@ import th.go.dxc.share.exception.BadGatewayException;
 @Slf4j
 public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistrationService {
 	private final static String WEB_API_URL_LOGIN = "/ws/auth/validate";
-	private final static String WEB_API_URL_PROFILE = "/general/profile";
+	private final static String WEB_API_URL_PROFILE = "/ws/dbd/juristic/v7/general/profile";
 	private final WebClient webClient;
 	private LoginResponse responseLogin;
 	private DbdApiConfigurationProperties properties;
@@ -48,8 +48,10 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	}
 
 	@Override
-	public void token(String userNin) {
+	public String token(String userNin) {
+		String result = null;
 		try {
+			System.out.println("token UserNin = " + userNin);
 			LoginResponse loginResponse = this.webClient.get()
 					.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
 							.queryParam("ConsumerSecret", properties.getConsumerSecret())
@@ -64,17 +66,21 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 			// ทำอะไรกับ loginResponse ต่อได้ตรงนี้
 			log.info("Login success: {}", loginResponse);
 			responseLogin = loginResponse;
+			result = "Success";
+			System.out.println("responseLogin = " + responseLogin);
 		} catch (BadGatewayException e) {
 			log.error("API returned error: {}", e.getMessage());
 		} catch (Exception e) {
 			log.error("Unexpected error", e);
 		}
+		return result;
 	}
 
 	@Override
 	public JuristicRegistrationResponse findProfile(RequesterDetails requesterDetails) {
 		JuristicRegistrationResponse response = null;
-		
+		System.out.println("responseLogin findProfile = " + responseLogin);
+		System.out.println("responseLogin findProfile getResult = " + responseLogin.getResult());
 		// ตรวจสอบว่า Access Token มีค่าหรือไม่
 		if (responseLogin == null || responseLogin.getResult() == null) {
 			throw new IllegalStateException("Access Token is missing. Please ensure you are logged in.");
