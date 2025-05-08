@@ -57,6 +57,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 							.queryParam("ConsumerSecret", properties.getConsumerSecret())
 							.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
 							.build())
+					.header("Consumer-Key", properties.getConsumerKey())
 					.accept(MediaType.APPLICATION_JSON).retrieve()
 					.onStatus(HttpStatus::isError,
 							response -> response.bodyToMono(String.class)
@@ -87,15 +88,14 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		}
 		// สร้าง Request Body ด้วย Map เพื่อความปลอดภัย
 		Map<String, Object> requestBody = new HashMap<>();
-		Map<String, Object> caseDetails = new HashMap<>();
-		caseDetails.put("OrganizationJuristicID", requesterDetails.getOrganizationJuristicID());
-		requestBody.put("caseList", Collections.singletonList(caseDetails));
+		requestBody.put("OrganizationJuristicID", requesterDetails.getOrganizationJuristicID());
 		
 		response = webClient
 			.post()
 			.uri(WEB_API_URL_PROFILE)
 			.header("Consumer-Key", properties.getConsumerKey()) // Key
 			.header("Token", responseLogin.getResult()) // Token
+			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(requestBody) // ใส่ body ที่จะส่ง
 			.retrieve()
 			.onStatus(HttpStatus::isError,
