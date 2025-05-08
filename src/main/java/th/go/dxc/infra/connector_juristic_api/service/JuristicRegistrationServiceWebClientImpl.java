@@ -42,7 +42,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		this.properties = properties;
 		HttpClient httpClient = HttpClient.create().wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG,
 				AdvancedByteBufFormat.TEXTUAL);
-		this.webClient = webClientBuilder.baseUrl(properties.getBaseUrlValidate())
+		this.webClient = webClientBuilder.baseUrl(properties.getBaseUrl())
 				.clientConnector(new ReactorClientHttpConnector(httpClient)).build();
 //		this.Token();
 	}
