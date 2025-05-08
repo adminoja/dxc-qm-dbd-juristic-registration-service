@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CertificateRequestDetails {
+public class RequesterDetails {
 	private String OrganizationJuristicID;
 }

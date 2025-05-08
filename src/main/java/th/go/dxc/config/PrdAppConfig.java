@@ -12,7 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import th.go.dxc.app.service.DbdJuristicRegistationService;
+import th.go.dxc.app.service.DbdJuristicRegistationServiceJpaImpl;
+import th.go.dxc.infra.connector_juristic_api.config.DbdApiConfigurationProperties;
+import th.go.dxc.infra.connector_juristic_api.service.JuristicRegistrationService;
+import th.go.dxc.infra.connector_juristic_api.service.JuristicRegistrationServiceWebClientImpl;
 import th.go.dxc.share.commons.util.ObjectMapperService;
+import th.go.dxc.share.security.service.SecurityService;
+import th.go.dxc.share.security.service.SecurityServiceJwtImpl;
 
 @Profile("prd")
 @Configuration
@@ -31,9 +38,20 @@ public class PrdAppConfig {
 		return new DefaultMapperFactory.Builder().build();
 	}
 	
-//	@Bean
-//	public SecurityService securityService() {
-//		return new SecurityServiceJwtImpl();
-//	}
+	@Bean
+	public SecurityService securityService() {
+		return new SecurityServiceJwtImpl();
+	}
 
+	@Bean
+	public JuristicRegistrationService juristicRegistrationService(WebClient.Builder webClientBuilder,
+			DbdApiConfigurationProperties properties) {
+		return new JuristicRegistrationServiceWebClientImpl(webClientBuilder, properties);
+	}
+	
+	@Bean
+	public DbdJuristicRegistationService dbdJuristicRegistationService(JuristicRegistrationService juristicRegistrationService,
+			MapperFacade mapperFacade, ObjectMapperService mapperService, SecurityService securityService) {
+		return new DbdJuristicRegistationServiceJpaImpl(juristicRegistrationService, mapperFacade, mapperService, securityService);
+	}
 }

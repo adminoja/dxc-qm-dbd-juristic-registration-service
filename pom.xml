@@ -4,7 +4,7 @@
   <artifactId>dxc-qm-dbd-juristic-registration-service</artifactId>
   <version>1.0.0-RELEASE</version>
   <name>dxc-qm-dbd-juristic-registration-service</name>
-  <description>บริการค้นหาข้อมูล นิติบุคคล</description>
+  <description>บริการค้นหาข้อมูล นิติบุคคล กรมพัฒนาธุรกิจการค้า</description>
   
   <parent>
 		<groupId>org.springframework.boot</groupId>
