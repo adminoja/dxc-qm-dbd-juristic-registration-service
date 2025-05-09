@@ -144,7 +144,7 @@ public class JuristicRegistrationResponse {
 		@JsonProperty("cd:City")
 		private City city;
 		@JsonProperty("cd:CountrySubDivision")
-		private CountrySubDivision countrySubDivision;
+		private CountrySubDivision province;
 	}
 
 	@Data
