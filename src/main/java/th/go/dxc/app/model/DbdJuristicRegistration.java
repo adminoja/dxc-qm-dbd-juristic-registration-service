@@ -66,6 +66,8 @@ public class DbdJuristicRegistration {
 		private Address address;
 		@Schema(description = "ข้อมูลอื่น ๆ ของนิติบุคคล")
 		private List<JuristicPersonDescription> descriptions;
+		@Schema(description = "ส่งบันทึกการเงิน")
+		private String financialSubmitRecord;
 		@Schema(description = "รองรับการให้บริการ")
 		private String digitalIDFlag;
 	}

@@ -61,6 +61,8 @@ public class JuristicRegistrationResponse {
 		private Address address;
 		@JsonProperty("cd:OrganizationJuristicPersonDescription")
 		private List<JuristicPersonDescription> descriptions;
+		@JsonProperty("td:FinancialSubmitRecord")
+		private String financialSubmitRecord;
 		@JsonProperty("td:DigitalIDFlag")
 		private String digitalIDFlag;
 	}
