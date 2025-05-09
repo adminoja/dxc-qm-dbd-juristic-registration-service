@@ -1,13 +1,9 @@
 package th.go.dxc.infra.connector_juristic_api.service;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -15,7 +11,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import io.netty.handler.logging.LogLevel;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +35,12 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	public JuristicRegistrationServiceWebClientImpl(WebClient.Builder webClientBuilder,
 			DbdApiConfigurationProperties properties) {
 		this.properties = properties;
-		HttpClient httpClient = HttpClient.create().wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG,
-				AdvancedByteBufFormat.TEXTUAL);
-		this.webClient = webClientBuilder.baseUrl(properties.getBaseUrl())
-				.clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+		HttpClient httpClient = HttpClient.create()
+				.wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL);
+		this.webClient = webClientBuilder
+				.baseUrl(properties.getBaseUrl())
+				.clientConnector(new ReactorClientHttpConnector(httpClient))
+				.build();
 //		this.Token();
 	}
 
@@ -51,14 +48,15 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	public String token(String userNin) {
 		String result = null;
 		try {
-			System.out.println("token UserNin = " + userNin);
-			String loginResponse = webClient.get()
+			log.info("token UserNin = " + userNin);
+			String responseToken = webClient.get()
 					.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
-							.queryParam("ConsumerSecret", properties.getConsumerSecret())
-							.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
+							.queryParam("ConsumerSecret", properties.getConsumerSecret().trim())
+							.queryParam("AgentID", userNin.trim()) // ต้องเป็นเลขบัตรคนค้น
 							.build())
 					.header("Consumer-Key", properties.getConsumerKey())
-					.accept(MediaType.APPLICATION_JSON).retrieve()
+					.accept(MediaType.APPLICATION_JSON)
+					.retrieve()
 					.onStatus(HttpStatus::isError,
 							response -> response.bodyToMono(String.class)
 									.flatMap(body -> Mono.error(new BadGatewayException("API Error: " + body))))
@@ -66,18 +64,14 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 					.block(); // ทำให้เป็น synchronous
 
 			// ทำอะไรกับ loginResponse ต่อได้ตรงนี้
-			log.info("Login success: {}", loginResponse);
-			
-//			responseLogin = loginResponse;
-			
-			System.out.println("loginResponse = " + loginResponse);
+			log.info("responseToken: {}", responseToken);
 			
 			Gson gson = new Gson(); // อย่าลืม import com.google.gson.Gson
-			LoginResponse loginObj = gson.fromJson(loginResponse, LoginResponse.class);
-			System.out.println("Parsed Result = " + loginObj.getResult());
+			LoginResponse loginObj = gson.fromJson(responseToken, LoginResponse.class);
+			log.info("loginObj Result = " + loginObj.getResult());
 			
 			responseLogin = loginObj;
-			System.out.println("responseLogin = " + responseLogin);
+			log.info("responseLogin = " + responseLogin);
 			
 			result = "Success";
 			
@@ -92,12 +86,14 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	@Override
 	public JuristicRegistrationResponse findProfile(RequesterDetails requesterDetails) {
 		JuristicRegistrationResponse response = null;
-		System.out.println("responseLogin findProfile = " + responseLogin);
-		System.out.println("responseLogin findProfile getResult = " + responseLogin.getResult());
+		
 		// ตรวจสอบว่า Access Token มีค่าหรือไม่
 		if (responseLogin == null || responseLogin.getResult() == null) {
 			throw new IllegalStateException("Access Token is missing. Please ensure you are logged in.");
 		}
+		
+		log.info("responseLogin findProfile = " + responseLogin);
+		
 		// สร้าง Request Body ด้วย Map เพื่อความปลอดภัย
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("OrganizationJuristicID", requesterDetails.getOrganizationJuristicID());
@@ -115,23 +111,8 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 						.flatMap(errorResponseBody -> Mono.error(
 							new ResponseStatusException(clientResponse.statusCode(), errorResponseBody))))
 			.bodyToMono(JuristicRegistrationResponse.class)
-			.doOnError(ResponseStatusException.class, error -> {
-//				logClientReceive(error.getReason(), 0, error.getStatus());
-				try {
-					throw new BadGatewayException(error.getReason());
-				} catch (BadGatewayException e) {
-					e.printStackTrace();
-				}
-			})
-			.doOnError(Exception.class, error -> {
-				log.debug("error = {}", error);
-//				logClientReceive(error.getMessage(), 0, HttpStatus.OK);
-				try {
-					throw new BadGatewayException(error.getMessage());
-				} catch (BadGatewayException e) {
-					e.printStackTrace();
-				}
-			})
+			.onErrorMap(ResponseStatusException.class, e -> new BadGatewayException(e.getReason()))
+			.onErrorMap(Exception.class, e -> new BadGatewayException(e.getMessage()))
 			.block();
 		
 		return response;

@@ -63,13 +63,4 @@ public class PrdSecurityConfig extends WebSecurityConfigurerAdapter {
 		);
 	}
 	
-//	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-//        clients.inMemory()
-//                .withClient("dxc-search-server")
-////                .secret("{noop}your-client-secret")
-//                .authorizedGrantTypes("refresh_token")
-////                .scopes("read", "write")
-//                .accessTokenValiditySeconds(30) // อายุของ Access Token 1 ชั่วโมง
-//                .refreshTokenValiditySeconds(86400); // อายุของ Refresh Token 1 วัน
-//    }
 }

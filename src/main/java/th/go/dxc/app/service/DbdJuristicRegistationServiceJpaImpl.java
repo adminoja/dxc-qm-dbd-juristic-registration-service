@@ -41,15 +41,15 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 		requesterDetails.setOrganizationJuristicID(filter.getOrganizationJuristicID());
 		
 //		DxcUserDetails userDetails = securityService.getCurrentUser();
-		System.out.println("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
+		log.info("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
 		String userNin = securityService.getCurrentUser().getUserNin();
 		String result = juristicRegistrationService.token(userNin);
 		
 		if ("Success".contains(result)) {
 			JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
-			System.out.println("profileResponse = " + juristicRegistrationResponse);
+			log.info("profileResponse = " + juristicRegistrationResponse);
 			
-			if (juristicRegistrationResponse != null) {
+			if (juristicRegistrationResponse != null && juristicRegistrationResponse.getStatus().getCode() != "1000") {
 				dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
 				resultList.add(dbdJuristicRegistration);
 			}
