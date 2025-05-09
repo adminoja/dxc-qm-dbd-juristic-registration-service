@@ -140,23 +140,31 @@ public class JuristicRegistrationResponse {
 		@JsonProperty("cd:Road")
 		private String road;
 		@JsonProperty("cd:CitySubDivision")
-		private Division subDivision;
+		private CitySubDivision citySub;
 		@JsonProperty("cd:City")
-		private Division city;
+		private City city;
 		@JsonProperty("cd:CountrySubDivision")
-		private Division province;
+		private CountrySubDivision countrySubDivision;
 	}
 
 	@Data
-	public static class Division {
+	public static class CitySubDivision {
 		@JsonProperty("cr:CitySubDivisionCode")
-		private String code;
+		private String citySubCode;
 		@JsonProperty("cr:CitySubDivisionTextTH")
-		private String textTH;
+		private String citySubTextTH;
+	}
+	
+	@Data
+	public static class City {
 		@JsonProperty("cr:CityCode")
 		private String cityCode;
 		@JsonProperty("cr:CityTextTH")
 		private String cityTextTH;
+	}
+	
+	@Data
+	public static class CountrySubDivision {
 		@JsonProperty("cr:CountrySubDivisionCode")
 		private String provinceCode;
 		@JsonProperty("cr:CountrySubDivisionTextTH")

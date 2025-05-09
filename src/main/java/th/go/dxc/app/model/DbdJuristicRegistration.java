@@ -2,10 +2,13 @@ package th.go.dxc.app.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse;
 
 @Schema(description = "ข้อมูลนิติบุคคล")
 @AllArgsConstructor
@@ -142,23 +145,31 @@ public class DbdJuristicRegistration {
 		@Schema(description = "ถนน")
 		private String road;
 		@Schema(description = "ตำบล")
-		private Division subDivision;
+		private CitySubDivision citySub;
 		@Schema(description = "อำเภอ")
-		private Division city;
+		private City city;
 		@Schema(description = "จังหวัด")
-		private Division province;
+		private CountrySubDivision province;
 	}
-
+	
 	@Data
-	public static class Division {
+	public static class CitySubDivision {
 		@Schema(description = "รหัสของตำบล")
-		private String code;
+		private String citySubCode;
 		@Schema(description = "ชื่อของตำบล (ภาษาไทย)")
-		private String textTH;
+		private String citySubTextTH;
+	}
+	
+	@Data
+	public static class City {
 		@Schema(description = "รหัสของอำเภอ")
 		private String cityCode;
 		@Schema(description = "ชื่อของอำเภอ (ภาษาไทย)")
 		private String cityTextTH;
+	}
+	
+	@Data
+	public static class CountrySubDivision {
 		@Schema(description = "รหัสของจังหวัด")
 		private String provinceCode;
 		@Schema(description = "ชื่อของจังหวัด (ภาษาไทย)")
