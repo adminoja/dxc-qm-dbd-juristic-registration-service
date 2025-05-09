@@ -58,7 +58,7 @@ public class JuristicRegistrationResponse {
 		@JsonProperty("cd:OrganizationJuristicBranchName")
 		private String branchName;
 		@JsonProperty("cd:OrganizationJuristicAddress")
-		private AddressWrapper address;
+		private Address address;
 		@JsonProperty("cd:OrganizationJuristicPersonDescription")
 		private List<JuristicPersonDescription> descriptions;
 		@JsonProperty("td:DigitalIDFlag")
@@ -110,13 +110,13 @@ public class JuristicRegistrationResponse {
 	}
 
 	@Data
-	public static class AddressWrapper {
+	public static class Address {
 		@JsonProperty("cr:AddressType")
-		private Address address;
+		private AddressType addressType;
 	}
 
 	@Data
-	public static class Address {
+	public static class AddressType {
 		@JsonProperty("cd:Address")
 		private String address;
 		@JsonProperty("cd:Building")

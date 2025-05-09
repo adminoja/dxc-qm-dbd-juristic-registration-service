@@ -60,7 +60,7 @@ public class DbdJuristicRegistration {
 		@Schema(description = "ชื่อสาขาของนิติบุคคล")
 		private String branchName;
 		@Schema(description = "ที่ตั้งของสำนักงานนิติบุคคล")
-		private AddressWrapper address;
+		private Address address;
 		@Schema(description = "ข้อมูลอื่น ๆ ของนิติบุคคล")
 		private List<JuristicPersonDescription> descriptions;
 		@Schema(description = "รองรับการให้บริการ")
@@ -112,13 +112,13 @@ public class DbdJuristicRegistration {
 	}
 
 	@Data
-	public static class AddressWrapper {
+	public static class Address {
 		@Schema(description = "ประเภทที่อยู่")
-		private Address address;
+		private AddressType addressType;
 	}
 
 	@Data
-	public static class Address {
+	public static class AddressType {
 		@Schema(description = "ที่อยู่")
 		private String address;
 		@Schema(description = "ชื่อตึก/อาคาร")
