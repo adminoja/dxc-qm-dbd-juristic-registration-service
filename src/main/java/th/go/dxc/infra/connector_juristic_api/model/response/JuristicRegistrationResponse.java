@@ -3,6 +3,7 @@ package th.go.dxc.infra.connector_juristic_api.model.response;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class JuristicRegistrationResponse {
 		private String description;
 	}
 
-	@Data
+	@JsonDeserialize(using = ProfileDataDeserializer.class)
 	public static class ProfileData {
 		@JsonProperty("cd:OrganizationJuristicPerson")
 		private OrganizationJuristicPerson organization;
