@@ -16,19 +16,25 @@ public class JuristicRegistrationResponse {
 	private Status status;
 	private ProfileData data;
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class Status {
 		private String code;
 		private String description;
 	}
 
-	@JsonDeserialize(using = ProfileDataDeserializer.class)
+//	@JsonDeserialize(using = ProfileDataDeserializer.class)
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class ProfileData {
 		@JsonProperty("cd:OrganizationJuristicPerson")
 		private OrganizationJuristicPerson organization;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class OrganizationJuristicPerson {
 		@JsonProperty("cd:OrganizationJuristicID")
@@ -69,6 +75,8 @@ public class JuristicRegistrationResponse {
 		private String digitalIDFlag;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class JuristicObjective {
 		@JsonProperty("td:JuristicObjective")
@@ -95,12 +103,16 @@ public class JuristicRegistrationResponse {
 		private String investAmount;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class JuristicPersonDetail {
 		@JsonProperty("cd:PersonNameTH")
 		private PersonName nameTH;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class PersonName {
 		@JsonProperty("cd:PersonNameTitleTextTH")
@@ -113,12 +125,16 @@ public class JuristicRegistrationResponse {
 		private String lastName;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class Address {
 		@JsonProperty("cr:AddressType")
 		private AddressType addressType;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class AddressType {
 		@JsonProperty("cd:Address")
@@ -151,6 +167,8 @@ public class JuristicRegistrationResponse {
 		private CountrySubDivision province;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class CitySubDivision {
 		@JsonProperty("cr:CitySubDivisionCode")
@@ -159,6 +177,8 @@ public class JuristicRegistrationResponse {
 		private String citySubTextTH;
 	}
 	
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class City {
 		@JsonProperty("cr:CityCode")
@@ -167,6 +187,8 @@ public class JuristicRegistrationResponse {
 		private String cityTextTH;
 	}
 	
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class CountrySubDivision {
 		@JsonProperty("cr:CountrySubDivisionCode")
@@ -175,6 +197,8 @@ public class JuristicRegistrationResponse {
 		private String provinceTextTH;
 	}
 
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class JuristicPersonDescription {
 		@JsonProperty("cd:OrganizationJuristicPersonDescriptionSequence")

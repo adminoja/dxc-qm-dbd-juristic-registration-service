@@ -101,7 +101,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("OrganizationJuristicID", requesterDetails.getOrganizationJuristicID());
 		
-		response = webClient
+		String responseBody = webClient
 			.post()
 			.uri(WEB_API_URL_PROFILE)
 			.header("Consumer-Key", properties.getConsumerKey()) // Key
@@ -113,7 +113,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 					clientResponse -> clientResponse.bodyToMono(String.class)
 						.flatMap(errorResponseBody -> Mono.error(
 							new ResponseStatusException(clientResponse.statusCode(), errorResponseBody))))
-			.bodyToMono(JuristicRegistrationResponse.class)
+			.bodyToMono(String.class)
 			.doOnError(ResponseStatusException.class, error -> {
 //				logClientReceive(error.getReason(), 0, error.getStatus());
 				try {
@@ -133,6 +133,9 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 				}
 			})
 			.block();
+		
+		log.info("responseBody = " + responseBody);
+		
 		
 		return response;
 	}
