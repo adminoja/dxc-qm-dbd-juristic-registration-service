@@ -2,32 +2,41 @@ package th.go.dxc.infra.connector_juristic_api.model.response;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse.OrganizationJuristicPerson;
 import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse.ProfileData;
 
+@Slf4j
 public class ProfileDataDeserializer extends JsonDeserializer<ProfileData> {
 	
 	@Override
-	public ProfileData deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		JsonNode node = p.getCodec().readTree(p);
+	public ProfileData deserialize(JsonParser p, DeserializationContext ctxt)
+			throws IOException {
+		try {
+			ObjectCodec codec = p.getCodec();
+			JsonNode node = codec.readTree(p);
 
-		// ถ้า data เป็น string "{}", ไม่ต้องแปลงอะไร
-		if (node.isTextual() && "{}".equals(node.textValue())) {
-			return null;
+			if (node.isTextual()) {
+				String json = node.asText();
+				JsonNode innerNode = codec.readTree(new JsonFactory().createParser(json));
+				ProfileData data = new ProfileData();
+				data.setOrganization(codec.treeToValue(innerNode.get("cd:OrganizationJuristicPerson"), OrganizationJuristicPerson.class));
+				return data;
+			}
+
+			return codec.treeToValue(node, ProfileData.class);
+
+		} catch (Exception e) {
+			log.warn("Failed to deserialize ProfileData: {}", e.getMessage());
+			return null; // หรือโยน custom exception เองแบบสั้น
 		}
-
-		// ถ้า data เป็น object เปล่า {}
-		if (node.isObject() && node.size() == 0) {
-			return null;
-		}
-
-		// ปกติ แปลงเป็น ProfileData ได้เลย
-		ObjectMapper mapper = (ObjectMapper) p.getCodec();
-		return mapper.treeToValue(node, ProfileData.class);
 	}
+
 }

@@ -23,6 +23,7 @@ public class JuristicRegistrationResponse {
 	}
 
 	@JsonDeserialize(using = ProfileDataDeserializer.class)
+	@Data
 	public static class ProfileData {
 		@JsonProperty("cd:OrganizationJuristicPerson")
 		private OrganizationJuristicPerson organization;
