@@ -55,6 +55,8 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 			}
 		}
 		
+		log.info("resultList = ", resultList);
+		log.debug("resultList = ", resultList);
 		resultPage = mapperService.mapSortedAndSlicedPage(resultList, pageable, DbdJuristicRegistration.class);
 		return resultPage;
 	}

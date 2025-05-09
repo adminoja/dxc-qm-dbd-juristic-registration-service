@@ -1,5 +1,6 @@
 package th.go.dxc.infra.connector_juristic_api.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,9 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import io.netty.handler.logging.LogLevel;
@@ -44,6 +50,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 //		this.Token();
 	}
 
+	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
 	@Override
 	public String token(String userNin) {
 		String result = null;
@@ -93,12 +100,13 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		}
 		
 		log.info("responseLogin findProfile = " + responseLogin);
+		log.info("responseLogin findProfile getResult = " + responseLogin.getResult());
 		
 		// สร้าง Request Body ด้วย Map เพื่อความปลอดภัย
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("OrganizationJuristicID", requesterDetails.getOrganizationJuristicID());
 		
-		response = webClient
+		String responseBody = webClient
 			.post()
 			.uri(WEB_API_URL_PROFILE)
 			.header("Consumer-Key", properties.getConsumerKey()) // Key
@@ -110,12 +118,49 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 					clientResponse -> clientResponse.bodyToMono(String.class)
 						.flatMap(errorResponseBody -> Mono.error(
 							new ResponseStatusException(clientResponse.statusCode(), errorResponseBody))))
-			.bodyToMono(JuristicRegistrationResponse.class)
-			.onErrorMap(ResponseStatusException.class, e -> new BadGatewayException(e.getReason()))
-			.onErrorMap(Exception.class, e -> new BadGatewayException(e.getMessage()))
+			.bodyToMono(String.class)
+			.doOnError(ResponseStatusException.class, error -> {
+//				logClientReceive(error.getReason(), 0, error.getStatus());
+				try {
+					throw new BadGatewayException(error.getReason());
+				} catch (BadGatewayException e) {
+					e.printStackTrace();
+				}
+			})
+			.doOnError(Exception.class, error -> {
+				log.debug("error = {}", error);
+//				logClientReceive(error.getMessage(), 0, HttpStatus.OK);
+				try {
+					throw new BadGatewayException(error.getMessage());
+				} catch (BadGatewayException e) {
+					e.printStackTrace();
+				}
+			})
 			.block();
 		
+		
+			// ใช้ ObjectMapper เช็ก
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(responseBody);
+			JsonNode dataNode = root.get("data");
+
+			if (dataNode != null && dataNode.isObject() && dataNode.size() == 0) {
+				log.warn("ไม่มีข้อมูลนิติบุคคล (data เป็น object เปล่า)");
+				return null;
+			}
+
+			// ถ้า data มีค่า ก็ map ปกติ
+			response = mapper.readValue(responseBody, JuristicRegistrationResponse.class);
+
+		} catch (IOException e) {
+			log.error("เกิดข้อผิดพลาดในการอ่าน JSON", e);
+			throw new BadGatewayException("ผิดพลาดในการประมวลผลข้อมูลนิติบุคคล");
+		}	
+		
+		log.info("response = " + response);
 		return response;
+		
 	}
 
 	// mock
