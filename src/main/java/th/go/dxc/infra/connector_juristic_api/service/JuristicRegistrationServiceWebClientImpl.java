@@ -45,7 +45,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 //		this.Token();
 	}
 
-	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
+//	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
 	@Override
 	public String token(String userNin) {
 		String result = null;
