@@ -44,9 +44,9 @@ public class PrdAppConfig {
 	}
 
 	@Bean
-	public JuristicRegistrationService juristicRegistrationService(WebClient.Builder webClientBuilder,
+	public JuristicRegistrationService juristicRegistrationService(WebClient.Builder webClientBuilder, SecurityService securityService,
 			DbdApiConfigurationProperties properties) {
-		return new JuristicRegistrationServiceWebClientImpl(webClientBuilder, properties);
+		return new JuristicRegistrationServiceWebClientImpl(webClientBuilder, securityService, properties);
 	}
 	
 	@Bean
