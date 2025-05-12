@@ -11,6 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import io.netty.handler.logging.LogLevel;
@@ -23,18 +25,22 @@ import th.go.dxc.infra.connector_juristic_api.model.request.RequesterDetails;
 import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse;
 import th.go.dxc.infra.connector_juristic_api.model.response.LoginResponse;
 import th.go.dxc.share.exception.BadGatewayException;
+import th.go.dxc.share.security.service.SecurityService;
 
 @Slf4j
 public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistrationService {
 	private final static String WEB_API_URL_LOGIN = "/ws/auth/validate";
 	private final static String WEB_API_URL_PROFILE = "/ws/dbd/juristic/v7/general/profile";
 	private final WebClient webClient;
+	private final SecurityService securityService;
 	private LoginResponse responseLogin;
 	private DbdApiConfigurationProperties properties;
 
 	@Autowired
-	public JuristicRegistrationServiceWebClientImpl(WebClient.Builder webClientBuilder,
+	public JuristicRegistrationServiceWebClientImpl(WebClient.Builder webClientBuilder, SecurityService securityService,
 			DbdApiConfigurationProperties properties) {
+		super();
+		this.securityService = securityService;
 		this.properties = properties;
 		HttpClient httpClient = HttpClient.create()
 				.wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL);
@@ -42,19 +48,19 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 				.baseUrl(properties.getBaseUrl())
 				.clientConnector(new ReactorClientHttpConnector(httpClient))
 				.build();
-//		this.Token();
+		this.token(securityService.getCurrentUser().getUserNin());
 	}
 
 //	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
-	@Override
+//	@Override
 	public String token(String userNin) {
 		String result = null;
 		try {
 			log.info("token UserNin = " + userNin);
 			String responseToken = webClient.get()
 					.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
-							.queryParam("ConsumerSecret", properties.getConsumerSecret().trim())
-							.queryParam("AgentID", userNin.trim()) // ต้องเป็นเลขบัตรคนค้น
+							.queryParam("ConsumerSecret", properties.getConsumerSecret())
+							.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
 							.build())
 					.header("Consumer-Key", properties.getConsumerKey())
 					.accept(MediaType.APPLICATION_JSON)
@@ -136,6 +142,15 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 		
 		log.info("responseBody = " + responseBody);
 		
+	
+		ObjectMapper mapper = new ObjectMapper();
+		// ถ้า data มีค่า ก็ map ปกติ
+		try {
+			response = mapper.readValue(responseBody, JuristicRegistrationResponse.class);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return response;
 	}

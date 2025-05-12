@@ -42,10 +42,10 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 		
 //		DxcUserDetails userDetails = securityService.getCurrentUser();
 		log.info("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
-		String userNin = securityService.getCurrentUser().getUserNin();
-		String result = juristicRegistrationService.token(userNin);
+//		String userNin = securityService.getCurrentUser().getUserNin();
+//		String result = juristicRegistrationService.token(userNin);
 		
-		if ("Success".contains(result)) {
+//		if ("Success".contains(result)) {
 			JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
 			log.info("profileResponse = " + juristicRegistrationResponse);
 			
@@ -53,7 +53,7 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 				dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
 				resultList.add(dbdJuristicRegistration);
 			}
-		}
+//		}
 		
 		log.info("resultList = ", resultList);
 		log.debug("resultList = ", resultList);
