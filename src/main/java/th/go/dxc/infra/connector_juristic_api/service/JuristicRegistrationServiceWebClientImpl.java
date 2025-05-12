@@ -1,5 +1,7 @@
 package th.go.dxc.infra.connector_juristic_api.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +37,8 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	private final SecurityService securityService;
 	private LoginResponse responseLogin;
 	private DbdApiConfigurationProperties properties;
+	private String accessToken;
+	private LocalDateTime tokenFetchedTime;
 
 	@Autowired
 	public JuristicRegistrationServiceWebClientImpl(WebClient.Builder webClientBuilder, SecurityService securityService,
@@ -48,13 +52,19 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 				.baseUrl(properties.getBaseUrl())
 				.clientConnector(new ReactorClientHttpConnector(httpClient))
 				.build();
-		this.token(securityService.getCurrentUser().getUserNin());
+//		this.token();
 	}
 
 //	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
 //	@Override
 	public String token(String userNin) {
-		String result = null;
+//		String result = null;
+		if (accessToken != null && tokenFetchedTime != null &&
+			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
+			log.info("Using cached token");
+			return accessToken;
+		}
+		
 		try {
 			log.info("token UserNin = " + userNin);
 			String responseToken = webClient.get()
@@ -74,31 +84,39 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 			// ทำอะไรกับ loginResponse ต่อได้ตรงนี้
 			log.info("responseToken: {}", responseToken);
 			
-			Gson gson = new Gson(); // อย่าลืม import com.google.gson.Gson
-			LoginResponse loginObj = gson.fromJson(responseToken, LoginResponse.class);
-			log.info("loginObj Result = " + loginObj.getResult());
+//			Gson gson = new Gson(); // อย่าลืม import com.google.gson.Gson
+//			LoginResponse loginObj = gson.fromJson(responseToken, LoginResponse.class);
+//			log.info("loginObj Result = " + loginObj.getResult());
+//			responseLogin = loginObj;
+//			log.info("responseLogin = " + responseLogin);
+//			result = "Success";
 			
+			
+			LoginResponse loginObj = new Gson().fromJson(responseToken, LoginResponse.class);
+			accessToken = loginObj.getResult();
+			tokenFetchedTime = LocalDateTime.now();
 			responseLogin = loginObj;
-			log.info("responseLogin = " + responseLogin);
-			
-			result = "Success";
-			
-		} catch (BadGatewayException e) {
-			log.error("API returned error: {}", e.getMessage());
+			log.info("New token fetched at {}", tokenFetchedTime);
+
+			return accessToken;
 		} catch (Exception e) {
 			log.error("Unexpected error", e);
+			throw new IllegalStateException("Failed to obtain token", e);
 		}
-		return result;
+//		return result;
 	}
 
 	@Override
 	public JuristicRegistrationResponse findProfile(RequesterDetails requesterDetails) {
 		JuristicRegistrationResponse response = null;
 		
-		// ตรวจสอบว่า Access Token มีค่าหรือไม่
-		if (responseLogin == null || responseLogin.getResult() == null) {
-			throw new IllegalStateException("Access Token is missing. Please ensure you are logged in.");
-		}
+		String userNin = securityService.getCurrentUser().getUserNin();
+		String token = token(userNin); // ดึงหรือ reuse token
+		
+//		// ตรวจสอบว่า Access Token มีค่าหรือไม่
+//		if (responseLogin == null || responseLogin.getResult() == null) {
+//			throw new IllegalStateException("Access Token is missing. Please ensure you are logged in.");
+//		}
 		
 		log.info("responseLogin findProfile = " + responseLogin);
 		log.info("responseLogin findProfile getResult = " + responseLogin.getResult());
@@ -111,7 +129,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 			.post()
 			.uri(WEB_API_URL_PROFILE)
 			.header("Consumer-Key", properties.getConsumerKey()) // Key
-			.header("Token", responseLogin.getResult()) // Token
+			.header("Token", token) // Token
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(requestBody) // ใส่ body ที่จะส่ง
 			.retrieve()
