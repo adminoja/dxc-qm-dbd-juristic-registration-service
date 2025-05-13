@@ -6,6 +6,35 @@
   <name>dxc-qm-dbd-juristic-registration-service</name>
   <description>บริการค้นหาข้อมูล นิติบุคคล กรมพัฒนาธุรกิจการค้า</description>
   
+  <licenses>
+		<license>
+			<name>DXC License, Version 1.0</name>
+			<url>https://www.dxc.go.th</url>
+		</license>
+	</licenses>
+	<organization>
+		<name>ศูนย์แลกเปลี่ยนข้อมูลกระบวนการยุติธรรม</name>
+		<url>https://www.dxc.go.th</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>dxc-support</id>
+			<name>DXC Support</name>
+			<email>dxcsupport@dxc.go.th</email>
+			<url>https://www.dxc.go.th</url>
+			<organization>DXC</organization>
+			<organizationUrl>https://www.dxco.go.th</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Asia/Bangkok</timezone>
+			<properties>
+				<picUrl>https://www.dxc.go.th</picUrl>
+			</properties>
+		</developer>
+	</developers>
+	
   <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
