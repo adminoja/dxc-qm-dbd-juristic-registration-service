@@ -14,22 +14,19 @@ import th.go.dxc.infra.connector_juristic_api.model.request.RequesterDetails;
 import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse;
 import th.go.dxc.infra.connector_juristic_api.service.JuristicRegistrationService;
 import th.go.dxc.share.commons.util.ObjectMapperService;
-import th.go.dxc.share.security.service.SecurityService;
 
 @Slf4j
 public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistationService {
 	private JuristicRegistrationService juristicRegistrationService;
 	private final MapperFacade mapperFacade;
 	private final ObjectMapperService mapperService;
-	private final SecurityService securityService;
 	
 	public DbdJuristicRegistationServiceJpaImpl(JuristicRegistrationService juristicRegistrationService, 
-			MapperFacade mapperFacade, ObjectMapperService mapperService, SecurityService securityService) {
+			MapperFacade mapperFacade, ObjectMapperService mapperService) {
 		super();
 		this.juristicRegistrationService = juristicRegistrationService;
 		this.mapperFacade = mapperFacade;
 		this.mapperService = mapperService;
-		this.securityService = securityService;
 	}
 
 	@Override
@@ -41,7 +38,7 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 		requesterDetails.setOrganizationJuristicID(filter.getOrganizationJuristicID());
 		
 //		DxcUserDetails userDetails = securityService.getCurrentUser();
-		log.info("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
+//		log.info("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
 //		String userNin = securityService.getCurrentUser().getUserNin();
 //		String result = juristicRegistrationService.token(userNin);
 		

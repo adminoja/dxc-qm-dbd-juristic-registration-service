@@ -2,13 +2,10 @@ package th.go.dxc.app.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse;
 
 @Schema(description = "ข้อมูลนิติบุคคล")
 @AllArgsConstructor
@@ -66,7 +63,7 @@ public class DbdJuristicRegistration {
 		private Address address;
 		@Schema(description = "ข้อมูลอื่น ๆ ของนิติบุคคล")
 		private List<JuristicPersonDescription> descriptions;
-		@Schema(description = "ส่งบันทึกการเงิน")
+		@Schema(description = "ประวัติการนำส่งงบการเงิน")
 		private String financialSubmitRecord;
 		@Schema(description = "รองรับการให้บริการ")
 		private String digitalIDFlag;

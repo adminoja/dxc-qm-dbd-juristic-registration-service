@@ -51,8 +51,8 @@ public class DevAppConfig {
 	
 	@Bean
 	public DbdJuristicRegistationService dbdJuristicRegistationService(JuristicRegistrationService juristicRegistrationService,
-			MapperFacade mapperFacade, ObjectMapperService mapperService, SecurityService securityService) {
-		return new DbdJuristicRegistationServiceJpaImpl(juristicRegistrationService, mapperFacade, mapperService, securityService);
+			MapperFacade mapperFacade, ObjectMapperService mapperService) {
+		return new DbdJuristicRegistationServiceJpaImpl(juristicRegistrationService, mapperFacade, mapperService);
 	}
 
 }
