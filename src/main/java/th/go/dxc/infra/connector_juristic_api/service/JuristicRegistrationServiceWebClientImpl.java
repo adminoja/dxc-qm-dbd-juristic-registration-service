@@ -40,6 +40,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	private DbdApiConfigurationProperties properties;
 	private String accessToken;
 	private LocalDateTime tokenFetchedTime;
+	private LocalDate tokenFetchedDate;
 
 	@Autowired
 	public JuristicRegistrationServiceWebClientImpl(WebClient.Builder webClientBuilder, SecurityService securityService,
@@ -60,8 +61,9 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	public String token(String userNin) {
 //		String result = null;
 		if (accessToken != null && tokenFetchedTime != null &&
-			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
-//			tokenFetchedTime.toLocalDate().isEqual(LocalDate.now())) {
+//			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
+			tokenFetchedDate.isEqual(LocalDate.now())) {
+			log.info("tokenFetchedDate = " + tokenFetchedDate + " / " + "LocalDate now = " + LocalDate.now());
 			log.info("Using cached token");
 			return accessToken;
 		}
