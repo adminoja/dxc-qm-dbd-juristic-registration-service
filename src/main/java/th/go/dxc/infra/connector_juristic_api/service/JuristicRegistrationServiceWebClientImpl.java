@@ -60,7 +60,8 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	public String token(String userNin) {
 //		String result = null;
 		if (accessToken != null && tokenFetchedTime != null &&
-			tokenFetchedTime.toLocalDate().isEqual(LocalDate.now())) {
+			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
+//			tokenFetchedTime.toLocalDate().isEqual(LocalDate.now())) {
 			log.info("Using cached token");
 			return accessToken;
 		}
