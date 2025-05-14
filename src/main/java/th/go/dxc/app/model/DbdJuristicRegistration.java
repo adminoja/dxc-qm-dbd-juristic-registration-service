@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse.OrganizationJuristicPersonDescription;
+import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse.OrganizationJuristicPersonList;
 
 @Schema(description = "ข้อมูลนิติบุคคล")
 @AllArgsConstructor
@@ -26,43 +28,43 @@ public class DbdJuristicRegistration {
 
 	@Data
 	public static class ProfileData {
-		private OrganizationJuristicPerson organization;
+		private OrganizationJuristicPerson organizationJuristicPerson;
 	}
 
 	@Data
 	public static class OrganizationJuristicPerson {
 		@Schema(description = "เลขทะเบียนนิติบุคคล 13 หลัก")
-		private String juristicID;
+		private String organizationJuristicID;
 		@Schema(description = "เลขทะเบียนนิติบุคคลเดิม")
-		private String oldJuristicID;
+		private String organizationOldJuristicID;
 		@Schema(description = "ชื่อนิติบุคคล (ภาษาไทย)")
-		private String nameTH;
+		private String organizationJuristicNameTH;
 		@Schema(description = "ชื่อนิติบุคคล (ภาษาอังกฤษ)")
-		private String nameEN;
+		private String organizationJuristicNameEN;
 		@Schema(description = "ประเภทนิติบุคคล")
-		private String type;
+		private String organizationJuristicType;
 		@Schema(description = "วันที่จดทะเบียนจัดตั้งของนิติบุคคล")
-		private String registerDate;
+		private String organizationJuristicRegisterDate;
 		@Schema(description = "สถานะของนิติบุคคล")
-		private String status;
+		private String organizationJuristicStatus;
 		@Schema(description = "วัตถุประสงค์ของนิติบุคคล")
-		private List<JuristicObjective> objectives;
+		private List<OrganizationJuristicObjective> organizationJuristicObjective;
 		@Schema(description = "จำนวนข้อวัตถุประสงค์")
-		private String objectiveItems;
+		private String organizationJuristicObjectiveItems;
 		@Schema(description = "จำนวนแผ่น")
-		private String objectivePages;
+		private String organizationJuristicObjectivePages;
 		@Schema(description = "ทุนจดทะเบียน (บาท)")
-		private String registerCapital;
+		private String organizationJuristicRegisterCapital;
 		@Schema(description = "ทุนเรียกชำระแล้ว")
-		private String paidUpCapital;
+		private String organizationJuristicPaidUpCapital;
 		@Schema(description = "รายชื่อบุคคลที่เป็นกรรมการ/ผู้เป็นหุ้นส่วนของนิติบุคคล")
-		private List<JuristicPerson> personList;
+		private List<OrganizationJuristicPersonList> organizationJuristicPersonList;
 		@Schema(description = "ชื่อสาขาของนิติบุคคล")
-		private String branchName;
+		private String organizationJuristicBranchName;
 		@Schema(description = "ที่ตั้งของสำนักงานนิติบุคคล")
-		private Address address;
+		private OrganizationJuristicAddress organizationJuristicAddress;
 		@Schema(description = "ข้อมูลอื่น ๆ ของนิติบุคคล")
-		private List<JuristicPersonDescription> descriptions;
+		private List<OrganizationJuristicPersonDescription> organizationJuristicPersonDescription;
 		@Schema(description = "ประวัติการนำส่งงบการเงิน")
 		private String financialSubmitRecord;
 		@Schema(description = "รองรับการให้บริการ")
@@ -70,51 +72,51 @@ public class DbdJuristicRegistration {
 	}
 
 	@Data
-	public static class JuristicObjective {
+	public static class OrganizationJuristicObjective {
 		@Schema(description = "R=วัตถุประสงค์ตอนจัดตั้ง F=วัตถุประสงค์ที่ยื่นงบการเงินปีล่าสุด")
-		private String objective;
+		private String juristicObjective;
 		@Schema(description = "วัตถุประสงค์ของนิติบุคคลอ้างอิงตามรหัส TSIC")
-		private String code;
+		private String juristicObjectiveCode;
 		@Schema(description = "วัตถุประสงค์ของนิติบุคคล (ภาษาไทย)")
-		private String textTH;
+		private String juristicObjectiveTextTH;
 		@Schema(description = "วัตถุประสงค์ของนิติบุคคล (ภาษาอังกฤษ)")
-		private String textEN;
+		private String juristicObjectiveTextEN;
+	}
+
+	@Data
+	public static class OrganizationJuristicPersonList {
+		@Schema(description = "ลำดับ")
+		private int juristicPersonSequence;
+		@Schema(description = "ประเภทบุคคล (กรรมการ/ผู้เป็นหุ้นส่วน)")
+		private String juristicPersonType;
+		@Schema(description = "ข้อมูลบุคคลที่เป็นกรรมการ/ผู้เป็นหุ้นส่วนของนิติบุคคล")
+		private JuristicPerson juristicPerson;
+		@Schema(description = "เฉพาะกรณีห้างหุ้นส่วน ลงหุ้นด้วย เงินสด ทรัพย์สิน แรงงาน")
+		private String juristicPersonInvestType;
+		@Schema(description = "เฉพาะกรณีห้างหุ้นส่วน จำนวนเงินลงทุน")
+		private String juristicPersonInvestAmount;
 	}
 
 	@Data
 	public static class JuristicPerson {
-		@Schema(description = "ลำดับ")
-		private int sequence;
-		@Schema(description = "ประเภทบุคคล (กรรมการ/ผู้เป็นหุ้นส่วน)")
-		private String type;
-		@Schema(description = "ข้อมูลบุคคลที่เป็นกรรมการ/ผู้เป็นหุ้นส่วนของนิติบุคคล")
-		private JuristicPersonDetail person;
-		@Schema(description = "เฉพาะกรณีห้างหุ้นส่วน ลงหุ้นด้วย เงินสด ทรัพย์สิน แรงงาน")
-		private String investType;
-		@Schema(description = "เฉพาะกรณีห้างหุ้นส่วน จำนวนเงินลงทุน")
-		private String investAmount;
-	}
-
-	@Data
-	public static class JuristicPersonDetail {
 		@Schema(description = "ชื่อของบุคคล(ภาษาไทย)")
-		private PersonName nameTH;
+		private PersonName personNameTH;
 	}
 
 	@Data
 	public static class PersonName {
 		@Schema(description = "คำนำหน้าชื่อของบุคคล(ภาษาไทย)")
-		private String title;
+		private String personNameTitleTextTH;
 		@Schema(description = "ชื่อตัวของบุคคล (ภาษาไทย)")
-		private String firstName;
+		private String personFirstNameTH;
 		@Schema(description = "ชื่อรองของบุคคล (ภาษาไทย)")
-		private String middleName;
+		private String personMiddleNameTH;
 		@Schema(description = "ชื่อสกุลของบุคคล(ภาษาไทย)")
-		private String lastName;
+		private String personLastNameTH;
 	}
 
 	@Data
-	public static class Address {
+	public static class OrganizationJuristicAddress {
 		@Schema(description = "ประเภทที่อยู่")
 		private AddressType addressType;
 	}
@@ -144,19 +146,19 @@ public class DbdJuristicRegistration {
 		@Schema(description = "ถนน")
 		private String road;
 		@Schema(description = "ตำบล")
-		private CitySubDivision citySub;
+		private CitySubDivision citySubDivision;
 		@Schema(description = "อำเภอ")
 		private City city;
 		@Schema(description = "จังหวัด")
-		private CountrySubDivision province;
+		private CountrySubDivision countrySubDivision;
 	}
 	
 	@Data
 	public static class CitySubDivision {
 		@Schema(description = "รหัสของตำบล")
-		private String citySubCode;
+		private String citySubDivisionCode;
 		@Schema(description = "ชื่อของตำบล (ภาษาไทย)")
-		private String citySubTextTH;
+		private String citySubDivisionTextTH;
 	}
 	
 	@Data
@@ -170,18 +172,18 @@ public class DbdJuristicRegistration {
 	@Data
 	public static class CountrySubDivision {
 		@Schema(description = "รหัสของจังหวัด")
-		private String provinceCode;
+		private String countrySubDivisionCode;
 		@Schema(description = "ชื่อของจังหวัด (ภาษาไทย)")
-		private String provinceTextTH;
+		private String countrySubDivisionTextTH;
 	}
 
 	@Data
-	public static class JuristicPersonDescription {
+	public static class OrganizationJuristicPersonDescription {
 		@Schema(description = "ลำดับของข้อมูล")
-		private int sequence;
+		private int organizationJuristicPersonDescriptionSequence;
 		@Schema(description = "อำนาจกรรมการ ข้อจำกัดอำนาจหุ้นส่วนผู้จัดการ รายการอื่นที่เห็นสมควรทราบ หมายเหตุการเปลี่ยนชื่อ หมายเหตุอื่น")
-		private String type;
+		private String organizationJuristicPersonDescriptionType;
 		@Schema(description = "รายละเอียดข้อมูล")
-		private String detail;
+		private String organizationJuristicPersonDescriptionDetail;
 	}
 }

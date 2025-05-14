@@ -1,6 +1,7 @@
 package th.go.dxc.infra.connector_juristic_api.service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,11 +57,10 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	}
 
 //	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
-//	@Override
 	public String token(String userNin) {
 //		String result = null;
 		if (accessToken != null && tokenFetchedTime != null &&
-			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
+			tokenFetchedTime.toLocalDate().isEqual(LocalDate.now())) {
 			log.info("Using cached token");
 			return accessToken;
 		}

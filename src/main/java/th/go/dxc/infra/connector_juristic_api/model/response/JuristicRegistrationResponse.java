@@ -24,13 +24,12 @@ public class JuristicRegistrationResponse {
 		private String description;
 	}
 
-//	@JsonDeserialize(using = ProfileDataDeserializer.class)
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Data
 	public static class ProfileData {
 		@JsonProperty("cd:OrganizationJuristicPerson")
-		private OrganizationJuristicPerson organization;
+		private OrganizationJuristicPerson organizationJuristicPerson;
 	}
 
 	@AllArgsConstructor
@@ -38,37 +37,37 @@ public class JuristicRegistrationResponse {
 	@Data
 	public static class OrganizationJuristicPerson {
 		@JsonProperty("cd:OrganizationJuristicID")
-		private String juristicID;
+		private String organizationJuristicID;
 		@JsonProperty("cd:OrganizationOldJuristicID")
-		private String oldJuristicID;
+		private String organizationOldJuristicID;
 		@JsonProperty("cd:OrganizationJuristicNameTH")
-		private String nameTH;
+		private String organizationJuristicNameTH;
 		@JsonProperty("cd:OrganizationJuristicNameEN")
-		private String nameEN;
+		private String organizationJuristicNameEN;
 		@JsonProperty("cd:OrganizationJuristicType")
-		private String type;
+		private String organizationJuristicType;
 		@JsonProperty("cd:OrganizationJuristicRegisterDate")
-		private String registerDate;
+		private String organizationJuristicRegisterDate;
 		@JsonProperty("cd:OrganizationJuristicStatus")
-		private String status;
+		private String organizationJuristicStatus;
 		@JsonProperty("cd:OrganizationJuristicObjective")
-		private List<JuristicObjective> objectives;
+		private List<OrganizationJuristicObjective> organizationJuristicObjective;
 		@JsonProperty("cd:OrganizationJuristicObjectiveItems")
-		private String objectiveItems;
+		private String organizationJuristicObjectiveItems;
 		@JsonProperty("cd:OrganizationJuristicObjectivePages")
-		private String objectivePages;
+		private String organizationJuristicObjectivePages;
 		@JsonProperty("cd:OrganizationJuristicRegisterCapital")
-		private String registerCapital;
+		private String organizationJuristicRegisterCapital;
 		@JsonProperty("cd:OrganizationJuristicPaidUpCapital")
-		private String paidUpCapital;
+		private String organizationJuristicPaidUpCapital;
 		@JsonProperty("cd:OrganizationJuristicPersonList")
-		private List<JuristicPerson> personList;
+		private List<OrganizationJuristicPersonList> organizationJuristicPersonList;
 		@JsonProperty("cd:OrganizationJuristicBranchName")
-		private String branchName;
+		private String organizationJuristicBranchName;
 		@JsonProperty("cd:OrganizationJuristicAddress")
-		private Address address;
+		private OrganizationJuristicAddress organizationJuristicAddress;
 		@JsonProperty("cd:OrganizationJuristicPersonDescription")
-		private List<JuristicPersonDescription> descriptions;
+		private List<OrganizationJuristicPersonDescription> organizationJuristicPersonDescription;
 		@JsonProperty("td:FinancialSubmitRecord")
 		private String financialSubmitRecord;
 		@JsonProperty("td:DigitalIDFlag")
@@ -78,57 +77,57 @@ public class JuristicRegistrationResponse {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Data
-	public static class JuristicObjective {
+	public static class OrganizationJuristicObjective {
 		@JsonProperty("td:JuristicObjective")
-		private String objective;
+		private String juristicObjective;
 		@JsonProperty("td:JuristicObjectiveCode")
-		private String code;
+		private String juristicObjectiveCode;
 		@JsonProperty("td:JuristicObjectiveTextTH")
-		private String textTH;
+		private String juristicObjectiveTextTH;
 		@JsonProperty("td:JuristicObjectiveTextEN")
-		private String textEN;
+		private String juristicObjectiveTextEN;
 	}
 
+	@Data
+	public static class OrganizationJuristicPersonList {
+		@JsonProperty("td:JuristicPersonSequence")
+		private int juristicPersonSequence;
+		@JsonProperty("td:JuristicPersonType")
+		private String juristicPersonType;
+		@JsonProperty("td:JuristicPerson")
+		private JuristicPerson juristicPerson;
+		@JsonProperty("td:JuristicPersonInvestType")
+		private String juristicPersonInvestType;
+		@JsonProperty("td:JuristicPersonInvestAmount")
+		private String juristicPersonInvestAmount;
+	}
+
+	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class JuristicPerson {
-		@JsonProperty("td:JuristicPersonSequence")
-		private int sequence;
-		@JsonProperty("td:JuristicPersonType")
-		private String type;
-		@JsonProperty("td:JuristicPerson")
-		private JuristicPersonDetail person;
-		@JsonProperty("td:JuristicPersonInvestType")
-		private String investType;
-		@JsonProperty("td:JuristicPersonInvestAmount")
-		private String investAmount;
-	}
-
-	@AllArgsConstructor
-	@NoArgsConstructor
-	@Data
-	public static class JuristicPersonDetail {
 		@JsonProperty("cd:PersonNameTH")
-		private PersonName nameTH;
+		private PersonNameTH personNameTH;
 	}
 
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Data
-	public static class PersonName {
+	public static class PersonNameTH {
 		@JsonProperty("cd:PersonNameTitleTextTH")
-		private String title;
+		private String personNameTitleTextTH;
 		@JsonProperty("cd:PersonFirstNameTH")
-		private String firstName;
+		private String personFirstNameTH;
 		@JsonProperty("cd:PersonMiddleNameTH")
-		private String middleName;
+		private String personMiddleNameTH;
 		@JsonProperty("cd:PersonLastNameTH")
-		private String lastName;
+		private String personLastNameTH;
 	}
 
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Data
-	public static class Address {
+	public static class OrganizationJuristicAddress {
 		@JsonProperty("cr:AddressType")
 		private AddressType addressType;
 	}
@@ -160,11 +159,11 @@ public class JuristicRegistrationResponse {
 		@JsonProperty("cd:Road")
 		private String road;
 		@JsonProperty("cd:CitySubDivision")
-		private CitySubDivision citySub;
+		private CitySubDivision citySubDivision;
 		@JsonProperty("cd:City")
 		private City city;
 		@JsonProperty("cd:CountrySubDivision")
-		private CountrySubDivision province;
+		private CountrySubDivision countrySubDivision;
 	}
 
 	@AllArgsConstructor
@@ -172,9 +171,9 @@ public class JuristicRegistrationResponse {
 	@Data
 	public static class CitySubDivision {
 		@JsonProperty("cr:CitySubDivisionCode")
-		private String citySubCode;
+		private String citySubDivisionCode;
 		@JsonProperty("cr:CitySubDivisionTextTH")
-		private String citySubTextTH;
+		private String citySubDivisionTextTH;
 	}
 	
 	@AllArgsConstructor
@@ -192,20 +191,20 @@ public class JuristicRegistrationResponse {
 	@Data
 	public static class CountrySubDivision {
 		@JsonProperty("cr:CountrySubDivisionCode")
-		private String provinceCode;
+		private String countrySubDivisionCode;
 		@JsonProperty("cr:CountrySubDivisionTextTH")
-		private String provinceTextTH;
+		private String countrySubDivisionTextTH;
 	}
 
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Data
-	public static class JuristicPersonDescription {
+	public static class OrganizationJuristicPersonDescription {
 		@JsonProperty("cd:OrganizationJuristicPersonDescriptionSequence")
-		private int sequence;
+		private int organizationJuristicPersonDescriptionSequence;
 		@JsonProperty("cd:OrganizationJuristicPersonDescriptionType")
-		private String type;
+		private String organizationJuristicPersonDescriptionType;
 		@JsonProperty("cd:OrganizationJuristicPersonDescriptionDetail")
-		private String detail;
+		private String organizationJuristicPersonDescriptionDetail;
 	}
 }

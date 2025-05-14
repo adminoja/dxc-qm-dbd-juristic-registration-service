@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import th.go.dxc.app.model.DbdJuristicRegistration;
 import th.go.dxc.app.model.DbdJuristicRegistrationFilter;
-import th.go.dxc.app.model.DbdJuristicRegistration.JuristicObjective;
+import th.go.dxc.app.model.DbdJuristicRegistration.OrganizationJuristicObjective;
 import th.go.dxc.infra.connector_juristic_api.model.request.RequesterDetails;
 import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse;
 import th.go.dxc.infra.connector_juristic_api.service.JuristicRegistrationService;
@@ -56,14 +56,14 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 		log.debug("resultList = ", resultList);
 		resultPage = mapperService.mapSortedAndSlicedPage(resultList, pageable, DbdJuristicRegistration.class);
 		resultPage = resultPage.map((m) -> {
-			List<JuristicObjective> juristicObjective = m.getData().getOrganization().getObjectives();
+			List<OrganizationJuristicObjective> juristicObjective = m.getData().getOrganizationJuristicPerson().getOrganizationJuristicObjective();
 			
 			if (juristicObjective != null) {
-				for (JuristicObjective obj : juristicObjective) {
-					if ("R".equals(obj.getObjective())) { // เปลี่ยนตาม field ที่ใช้เช็ค
-						obj.setObjective("วัตถุประสงค์ตอนจัดตั้ง"); // หรือ set ฟิลด์อื่นที่มิกซ์ต้องการ
-					} else if ("F".equals(obj.getObjective())) {
-						obj.setObjective("วัตถุประสงค์ที่ยื่นงบการเงินปีล่าสุด");
+				for (OrganizationJuristicObjective obj : juristicObjective) {
+					if ("R".equals(obj.getJuristicObjective())) { // เปลี่ยนตาม field ที่ใช้เช็ค
+						obj.setJuristicObjective("วัตถุประสงค์ตอนจัดตั้ง"); // หรือ set ฟิลด์อื่นที่มิกซ์ต้องการ
+					} else if ("F".equals(obj.getJuristicObjective())) {
+						obj.setJuristicObjective("วัตถุประสงค์ที่ยื่นงบการเงินปีล่าสุด");
 					}
 				}
 			}
