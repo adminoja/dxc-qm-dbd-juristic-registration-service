@@ -39,7 +39,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	private LoginResponse responseLogin;
 	private DbdApiConfigurationProperties properties;
 	private String accessToken;
-	private LocalDateTime tokenFetchedTime;
+//	private LocalDateTime tokenFetchedTime;
 	private LocalDate tokenFetchedDate;
 
 	@Autowired
@@ -60,7 +60,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 //	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
 	public String token(String userNin) {
 //		String result = null;
-		if (accessToken != null && tokenFetchedTime != null &&
+		if (accessToken != null && tokenFetchedDate != null &&
 //			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
 			tokenFetchedDate.isEqual(LocalDate.now())) {
 			log.info("tokenFetchedDate = " + tokenFetchedDate + " / " + "LocalDate now = " + LocalDate.now());
@@ -97,9 +97,10 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 			
 			LoginResponse loginObj = new Gson().fromJson(responseToken, LoginResponse.class);
 			accessToken = loginObj.getResult();
-			tokenFetchedTime = LocalDateTime.now();
+//			tokenFetchedTime = LocalDateTime.now();
+			tokenFetchedDate = LocalDate.now();
 			responseLogin = loginObj;
-			log.info("New token fetched at {}", tokenFetchedTime);
+			log.info("New token fetched at {}", tokenFetchedDate);
 
 			return accessToken;
 		} catch (Exception e) {
