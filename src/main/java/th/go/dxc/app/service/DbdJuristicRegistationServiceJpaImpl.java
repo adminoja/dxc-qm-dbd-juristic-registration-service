@@ -38,30 +38,20 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 		RequesterDetails requesterDetails = new RequesterDetails();
 		requesterDetails.setOrganizationJuristicID(filter.getOrganizationJuristicID());
 		
-//		DxcUserDetails userDetails = securityService.getCurrentUser();
-//		log.info("securityService UserNin = " + securityService.getCurrentUser().getUserNin());
-//		String userNin = securityService.getCurrentUser().getUserNin();
-//		String result = juristicRegistrationService.token(userNin);
+		JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
+		if (juristicRegistrationResponse != null && juristicRegistrationResponse.getStatus().getCode() != "1000") {
+			dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
+			resultList.add(dbdJuristicRegistration);
+		}
 		
-//		if ("Success".contains(result)) {
-			JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
-			log.info("profileResponse = " + juristicRegistrationResponse);
-			
-			if (juristicRegistrationResponse != null && juristicRegistrationResponse.getStatus().getCode() != "1000") {
-				dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
-				resultList.add(dbdJuristicRegistration);
-			}
-//		}
-			
-		log.debug("resultList = ", resultList);
 		resultPage = mapperService.mapSortedAndSlicedPage(resultList, pageable, DbdJuristicRegistration.class);
 		resultPage = resultPage.map((m) -> {
 			List<OrganizationJuristicObjective> juristicObjective = m.getData().getOrganizationJuristicPerson().getOrganizationJuristicObjective();
 			
 			if (juristicObjective != null) {
 				for (OrganizationJuristicObjective obj : juristicObjective) {
-					if ("R".equals(obj.getJuristicObjective())) { // เปลี่ยนตาม field ที่ใช้เช็ค
-						obj.setJuristicObjective("วัตถุประสงค์ตอนจัดตั้ง"); // หรือ set ฟิลด์อื่นที่มิกซ์ต้องการ
+					if ("R".equals(obj.getJuristicObjective())) {
+						obj.setJuristicObjective("วัตถุประสงค์ตอนจัดตั้ง");
 					} else if ("F".equals(obj.getJuristicObjective())) {
 						obj.setJuristicObjective("วัตถุประสงค์ที่ยื่นงบการเงินปีล่าสุด");
 					}
@@ -71,6 +61,7 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 			return m;
 		});
 		
+		log.info("Success resultPage ");
 		return resultPage;
 	}
 	

@@ -1,8 +1,6 @@
 package th.go.dxc.infra.connector_juristic_api.service;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -36,10 +33,8 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 	private final static String WEB_API_URL_PROFILE = "/ws/dbd/juristic/v7/general/profile";
 	private final WebClient webClient;
 	private final SecurityService securityService;
-	private LoginResponse responseLogin;
 	private DbdApiConfigurationProperties properties;
 	private String accessToken;
-//	private LocalDateTime tokenFetchedTime;
 	private LocalDate tokenFetchedDate;
 
 	@Autowired
@@ -54,156 +49,112 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 				.baseUrl(properties.getBaseUrl())
 				.clientConnector(new ReactorClientHttpConnector(httpClient))
 				.build();
-//		this.token();
 	}
-
-//	@Scheduled(cron = "0 0 0 * * ?") // กำหนดให้ทำงานทุกเที่ยงคืน
+	
+	/**
+	 * คืนค่า token ที่สามารถใช้ได้ในวันปัจจุบัน
+	 * หากหมดอายุ (ข้ามวัน) จะ request token ใหม่
+	 */
 	public String token(String userNin) {
-//		String result = null;
-		if (accessToken != null && tokenFetchedDate != null &&
-//			Duration.between(tokenFetchedTime, LocalDateTime.now()).toHours() < 24) {
-			tokenFetchedDate.isEqual(LocalDate.now())) {
-			log.info("tokenFetchedDate = " + tokenFetchedDate + " / " + "LocalDate now = " + LocalDate.now());
+		 // ใช้ token เดิม ถ้ายังเป็นวันเดียวกัน
+		if (accessToken != null && tokenFetchedDate != null && tokenFetchedDate.isEqual(LocalDate.now())) {
 			log.info("Using cached token");
 			return accessToken;
 		}
 		
+		// ขอ token ใหม่จาก API
 		try {
-			log.info("token UserNin = " + userNin);
 			String responseToken = webClient.get()
-					.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
-							.queryParam("ConsumerSecret", properties.getConsumerSecret())
-							.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
-							.build())
-					.header("Consumer-Key", properties.getConsumerKey())
-					.accept(MediaType.APPLICATION_JSON)
-					.retrieve()
-					.onStatus(HttpStatus::isError,
-							response -> response.bodyToMono(String.class)
-									.flatMap(body -> Mono.error(new BadGatewayException("API Error: " + body))))
-					.bodyToMono(String.class)
-					.block(); // ทำให้เป็น synchronous
-
-			// ทำอะไรกับ loginResponse ต่อได้ตรงนี้
-			log.info("responseToken: {}", responseToken);
+				.uri(uriBuilder -> uriBuilder.path(WEB_API_URL_LOGIN)
+					.queryParam("ConsumerSecret", properties.getConsumerSecret())
+					.queryParam("AgentID", userNin) // ต้องเป็นเลขบัตรคนค้น
+					.build())
+				.header("Consumer-Key", properties.getConsumerKey())
+				.accept(MediaType.APPLICATION_JSON)
+				.retrieve()
+				.onStatus(HttpStatus::isError,
+					response -> response.bodyToMono(String.class)
+						.flatMap(body -> {
+							log.error("Error response from token API: {}", body);
+							return Mono.error(new BadGatewayException("API Error: " + body));
+						})
+				)
+				.bodyToMono(String.class)
+				.block(); // ทำให้เป็น synchronous
 			
-//			Gson gson = new Gson(); // อย่าลืม import com.google.gson.Gson
-//			LoginResponse loginObj = gson.fromJson(responseToken, LoginResponse.class);
-//			log.info("loginObj Result = " + loginObj.getResult());
-//			responseLogin = loginObj;
-//			log.info("responseLogin = " + responseLogin);
-//			result = "Success";
-			
-			
+			 // แปลง response เป็น Java object
 			LoginResponse loginObj = new Gson().fromJson(responseToken, LoginResponse.class);
-			accessToken = loginObj.getResult();
-//			tokenFetchedTime = LocalDateTime.now();
-			tokenFetchedDate = LocalDate.now();
-			responseLogin = loginObj;
+			
+			if (loginObj == null || loginObj.getResult() == null || loginObj.getResult().isEmpty()) {
+				throw new IllegalStateException("Token response invalid or empty");
+			}
+			
+			this.accessToken = loginObj.getResult();
+			this.tokenFetchedDate = LocalDate.now();
+			
 			log.info("New token fetched at {}", tokenFetchedDate);
-
 			return accessToken;
+			
 		} catch (Exception e) {
-			log.error("Unexpected error", e);
+			log.error("Unexpected error while fetching token", e);
 			throw new IllegalStateException("Failed to obtain token", e);
 		}
-//		return result;
 	}
 
 	@Override
 	public JuristicRegistrationResponse findProfile(RequesterDetails requesterDetails) {
 		JuristicRegistrationResponse response = null;
-		
 		String userNin = securityService.getCurrentUser().getUserNin();
-		String token = token(userNin); // ดึงหรือ reuse token
-		
-//		// ตรวจสอบว่า Access Token มีค่าหรือไม่
-//		if (responseLogin == null || responseLogin.getResult() == null) {
-//			throw new IllegalStateException("Access Token is missing. Please ensure you are logged in.");
-//		}
-		
-		log.info("responseLogin findProfile = " + responseLogin);
-		log.info("responseLogin findProfile getResult = " + responseLogin.getResult());
+		String token = token(userNin);
 		
 		// สร้าง Request Body ด้วย Map เพื่อความปลอดภัย
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("OrganizationJuristicID", requesterDetails.getOrganizationJuristicID());
 		
-		String responseBody = webClient
-			.post()
-			.uri(WEB_API_URL_PROFILE)
-			.header("Consumer-Key", properties.getConsumerKey()) // Key
-			.header("Token", token) // Token
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(requestBody) // ใส่ body ที่จะส่ง
-			.retrieve()
-			.onStatus(HttpStatus::isError,
-					clientResponse -> clientResponse.bodyToMono(String.class)
-						.flatMap(errorResponseBody -> Mono.error(
-							new ResponseStatusException(clientResponse.statusCode(), errorResponseBody))))
-			.bodyToMono(String.class)
-			.doOnError(ResponseStatusException.class, error -> {
-//				logClientReceive(error.getReason(), 0, error.getStatus());
-				try {
-					throw new BadGatewayException(error.getReason());
-				} catch (BadGatewayException e) {
-					e.printStackTrace();
-				}
-			})
-			.doOnError(Exception.class, error -> {
-				log.debug("error = {}", error);
-				log.debug("เกิดข้อผิดพลาดในการเรียก API", error);
-//				logClientReceive(error.getMessage(), 0, HttpStatus.OK);
-				try {
-					throw new BadGatewayException(error.getMessage());
-				} catch (BadGatewayException e) {
-					e.printStackTrace();
-				}
-			})
-			.block();
-		
-		log.info("responseBody = " + responseBody);
-		
-	
-		ObjectMapper mapper = new ObjectMapper();
-		// ถ้า data มีค่า ก็ map ปกติ
+		String responseBody = null;
 		try {
-			response = mapper.readValue(responseBody, JuristicRegistrationResponse.class);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			responseBody = callApiProfile(token, requestBody);
+		} catch (ResponseStatusException ex) {
+			// กรณี token หมดอายุ ให้ clear แล้วลองใหม่
+			if (ex.getReason() != null && ex.getReason().contains("token expire")) {
+				log.warn("Token expired, retrying with new token...");
+				clearToken(); // ล้าง token ที่หมดอายุทิ้ง
+				token = token(userNin); // ดึง token ใหม่
+				responseBody = callApiProfile(token, requestBody); // retry ใหม่
+			} else {
+				throw ex; // ถ้าไม่ใช่ token expire ก็โยนต่อ
+			}
 		}
 		
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			response = mapper.readValue(responseBody, JuristicRegistrationResponse.class);
+			log.info("Success response api");
+		} catch (JsonProcessingException e) {
+			log.error("Error parsing responseBody", e);
+		}
 		return response;
+		
 	}
-
-	// mock
-//	@Override
-//	public JuristicRegistrationResponse findProfile(RequesterDetails requesterDetails) {
-//
-//		try {
-//			// โหลดไฟล์ JSON จาก resource
-//			ClassPathResource resource = new ClassPathResource("mock-certificate-response.json");
-//			String json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-//
-//			// แปลง JSON เป็น CertificateResponse
-//			Gson gson = new Gson();
-//			JuristicRegistrationResponse response = gson.fromJson(json, JuristicRegistrationResponse.class);
-//			
-//			System.out.println("JuristicID = " + response);
-//			// เช็กว่า organizationJuristicID ตรงกับที่ requester ส่งเข้ามา
-//			if (response.getData() != null && requesterDetails != null && requesterDetails.getOrganizationJuristicID()
-//					.equals(response.getData().getOrganization().getJuristicID())) {
-//				return response;
-//			} else {
-//				// ถ้าไม่ตรง จะ return null หรือ throw exception ก็ได้
-//				log.warn("organizationJuristicID ไม่ตรงกัน");
-//				return null;
-//			}
-//
-//		} catch (IOException e) {
-//			log.error("เกิดข้อผิดพลาดในการอ่าน mock file", e);
-//			return null;
-//		}
-//	}
+	
+	private String callApiProfile(String token, Map<String, Object> body) {
+		return webClient
+				.post()
+				.uri(WEB_API_URL_PROFILE)
+				.header("Consumer-Key", properties.getConsumerKey())
+				.header("Token", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(body)
+				.retrieve()
+				.onStatus(HttpStatus::isError, res -> 
+					res.bodyToMono(String.class).flatMap(error -> Mono.error(new ResponseStatusException(res.statusCode(), error)))
+				)
+				.bodyToMono(String.class)
+				.block();
+	}
+	
+	private void clearToken() {
+		this.accessToken = null;
+		this.tokenFetchedDate = null;
+	}
 }
