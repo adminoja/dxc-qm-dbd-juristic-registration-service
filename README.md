@@ -1,4 +1,4 @@
-# dxc-qm-dop-fact-finding-report-service
+# dxc-qm-dbd-juristic-registration-service
 
 บริการค้นหาข้อมูล นิติบุคคล (ค้นด้วยเลขทะเบียนนิติบุคคล)
 
