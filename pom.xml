@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>th.go.dxc</groupId>
   <artifactId>dxc-qm-dbd-juristic-registration-service</artifactId>
-  <version>1.18.1-RELEASE</version>
+  <version>1.1.9-RELEASE</version>
   <name>dxc-qm-dbd-juristic-registration-service</name>
   <description>บริการค้นหาข้อมูล นิติบุคคล กรมพัฒนาธุรกิจการค้า</description>
   
