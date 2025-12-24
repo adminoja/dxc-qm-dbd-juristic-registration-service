@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -72,7 +72,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 				.header("Consumer-Key", properties.getConsumerKey())
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.onStatus(HttpStatus::isError,
+				.onStatus(HttpStatusCode::isError,
 					response -> response.bodyToMono(String.class)
 						.flatMap(body -> {
 							log.error("Error response from token API: {}", body);
@@ -146,7 +146,7 @@ public class JuristicRegistrationServiceWebClientImpl implements JuristicRegistr
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(body)
 				.retrieve()
-				.onStatus(HttpStatus::isError, res -> 
+				.onStatus(HttpStatusCode::isError, res -> 
 					res.bodyToMono(String.class).flatMap(error -> Mono.error(new ResponseStatusException(res.statusCode(), error)))
 				)
 				.bodyToMono(String.class)

@@ -7,14 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import th.go.dxc.app.model.DbdJuristicRegistration;
-import th.go.dxc.app.model.DbdJuristicRegistrationFilter;
 import th.go.dxc.app.model.DbdJuristicRegistration.OrganizationJuristicObjective;
+import th.go.dxc.app.model.DbdJuristicRegistrationFilter;
 import th.go.dxc.infra.connector_juristic_api.model.request.RequesterDetails;
 import th.go.dxc.infra.connector_juristic_api.model.response.JuristicRegistrationResponse;
 import th.go.dxc.infra.connector_juristic_api.service.JuristicRegistrationService;
 import th.go.dxc.share.commons.util.ObjectMapperService;
+import th.go.dxc.share.util.mapstruct.MapperFacade;
 
 @Slf4j
 public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistationService {
@@ -40,7 +40,7 @@ public class DbdJuristicRegistationServiceJpaImpl implements DbdJuristicRegistat
 		
 		JuristicRegistrationResponse juristicRegistrationResponse = juristicRegistrationService.findProfile(requesterDetails);
 		if (juristicRegistrationResponse != null && juristicRegistrationResponse.getStatus().getCode() != "1000") {
-			dbdJuristicRegistration = mapperFacade.map(juristicRegistrationResponse, DbdJuristicRegistration.class);
+			dbdJuristicRegistration = mapperFacade.toDbdJuristicRegistration(juristicRegistrationResponse);
 			resultList.add(dbdJuristicRegistration);
 		}
 		

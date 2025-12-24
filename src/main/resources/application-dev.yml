@@ -94,7 +94,7 @@ app.datasource.primary:
     open-in-view: true  # have the same EntityManager until the web request is finished
     properties:
       # Naming Convention Properties      
-      hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      hibernate.physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
       # DDL Auto Properties (database) 
       javax.persistence.schema-generation.database.action: drop-and-create # Attention Required!!
       # Extra config
@@ -120,7 +120,7 @@ app.datasource.db-01:
     open-in-view: true  # have the same EntityManager until the web request is finished
     properties:
       # Naming Convention Properties      
-      hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      hibernate.physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 #      hibernate.hbm2ddl.import_files: sql/dev/dxc_master_db/dxc_organization_v1-h2-insert.sql, sql/dev/dxc_master_db/dxc_data_set_v1-h2-insert.sql, sql/dev/dxc_master_db/dxc_data_service_v1-h2-insert.sql # Attention Required!!
       # DDL Auto Properties (database)
       javax.persistence.schema-generation.database.action: drop-and-create # Attention Required!!
@@ -143,13 +143,12 @@ app.datasource.dxc-sam-db:
     maximum-pool-size: 3 #maximum pool size
   jpa:
     show-sql: true # Attention Required!!
-    database-platform: org.hibernate.dialect.SQLServer2008Dialect
+    database-platform: org.hibernate.dialect.SQLServerDialect
     open-in-view: true  # have the same EntityManager until the web request is finished
     properties:
-      hibernate.dialect: org.hibernate.dialect.SQLServer2008Dialect
+      hibernate.dialect: org.hibernate.dialect.SQLServerDialect
       # Naming Convention Properties      
-      hibernate.physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      hibernate.implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+      hibernate.physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 #      hibernate.hbm2ddl.import_files: sql/dxc_sam_db/dxc_user_search_log_v1-insert.sql # Attention Required!!
       # DDL Auto Properties (database)
       javax.persistence.schema-generation.database.action: none # Attention Required!!
