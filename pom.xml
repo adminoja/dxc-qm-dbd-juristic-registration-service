@@ -37,7 +37,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <relativePath/>
     <!-- lookup parent from repository -->
   </parent>
@@ -53,7 +53,7 @@
     <easy-random.version>7.1.1</easy-random.version>
     <jsqlparser.version>5.3</jsqlparser.version>
     <swagger-annotations.version>2.2.41</swagger-annotations.version>
-    <mssql-jdbc.version>13.2.0.jre11</mssql-jdbc.version>
+    <mssql-jdbc.version>13.2.1.jre11</mssql-jdbc.version>
     <gson.version>2.13.2</gson.version>
   </properties>
   <dependencies>
